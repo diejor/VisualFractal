@@ -47,8 +47,4 @@ public class Fractal extends JFrame {
 
         return size;
     }
-
-   public static void main(String[] args) {
-        new Fractal();
-   }
 }
