@@ -5,6 +5,7 @@ import java.awt.geom.Rectangle2D;
 
 public class ViewOperator {
     private Dimension winSize;
+    private Rectangle2D.Double drawBox;
     private Rectangle2D.Double viewBox;
     private Vector2D zoom;
     private Vector2D translation;
@@ -12,7 +13,7 @@ public class ViewOperator {
     private final double ZOOM = 0.10;
 
     public ViewOperator() {
-        this.viewBox = new Rectangle2D.Double(0, 0, 0, 0);
+        this.drawBox = new Rectangle2D.Double(0, 0, 0, 0);
         this.zoom = new Vector2D(1, 1);
         this.translation = new Vector2D(0, 0);
     }
@@ -20,6 +21,7 @@ public class ViewOperator {
     public ViewOperator(Dimension windowSize) {
         this();
         this.winSize = windowSize;
+        this.drawBox = new Rectangle2D.Double(0, 0, this.winSize.width, this.winSize.height);
         this.viewBox = new Rectangle2D.Double(0, 0, this.winSize.width, this.winSize.height);
     }
 
@@ -27,20 +29,31 @@ public class ViewOperator {
         double xzoom = 1 + dxzoom;
         double yzoom = 1 + dyzoom;
 
-        double widthScaled = viewBox.getWidth() * xzoom;
-        double heightScaled = viewBox.getHeight() * yzoom;
+        double widthScaled, heightScaled;
 
-        Vector2D zoomTranslation = new Vector2D(
-                -widthScaled*0.5 + viewBox.getX() + viewBox.getWidth()*0.5,
-                -heightScaled*0.5 + viewBox.getY() + viewBox.getHeight()*0.5
+        widthScaled = drawBox.getWidth() * xzoom;
+        heightScaled = drawBox.getHeight() * yzoom;
+
+        Vector2D zoomFix = zoomFix(
+                new Vector2D(viewBox.getCenterX(), viewBox.getCenterY()),
+                new Vector2D(drawBox.getX(), drawBox.getY()),
+                xzoom,
+                yzoom
         );
 
-        viewBox.setRect(
-                zoomTranslation.getX(),
-                zoomTranslation.getY(),
+        drawBox.setRect(
+                drawBox.getX() + zoomFix.getX(),
+                drawBox.getY() + zoomFix.getY(),
                 widthScaled,
                 heightScaled
         );
+    }
+
+    Vector2D zoomFix(Vector2D zoomCenter, Vector2D pos,double xzoom, double yzoom) {
+        Vector2D relativeToDraw = zoomCenter.substractR(pos);
+        Vector2D scaled = relativeToDraw.multiplyR(xzoom, yzoom);
+        Vector2D fixed = relativeToDraw.substractR(scaled);
+        return fixed;
     }
 
     public void zoomXUnits(int units) {
@@ -60,32 +73,25 @@ public class ViewOperator {
 
     public void translation(double dx, double dy) {
         translation.add(dx, dy);
-//        viewBox.setRect(
-//                translation.getX(),
-//                translation.getY(),
-//                viewBox.getWidth(),
-//                viewBox.getHeight()
-//        );
+        drawBox.setRect(
+                drawBox.getX() + dx,
+                drawBox.getY() + dy,
+                drawBox.getWidth(),
+                drawBox.getHeight()
+        );
+    }
+
+    public Rectangle2D getDrawBox() {
+        return drawBox;
     }
 
     public Rectangle2D getViewBox() {
         return viewBox;
     }
 
-    public Rectangle2D getDrawBox() {
-        Rectangle2D windowBox = new Rectangle2D.Double(
-                0,
-                0,
-                winSize.width,
-                winSize.height
-        );
-        Rectangle2D viewBox = getViewBox();
-        return viewBox.createIntersection(windowBox);
-    }
-
     public Vector2D relativePoint(Vector2D point) {
-        double x = point.getX() - viewBox.getX();
-        double y = point.getY() - viewBox.getY();
+        double x = point.getX() - drawBox.getX();
+        double y = point.getY() - drawBox.getY();
         return new Vector2D(x, y);
     }
 
@@ -93,9 +99,9 @@ public class ViewOperator {
     public String toString() {
         return "ViewOperator{" +
                 ", winSize=" + winSize +
-                ", viewBox=" + viewBox +
+                ", viewBox=" + drawBox +
                 ", zoom=" + zoom +
-                ", displacement=" + viewBox.getX() + ", "+ viewBox.getY() +
+                ", displacement=" + drawBox.getX() + ", "+ drawBox.getY() +
                 '}';
     }
 }

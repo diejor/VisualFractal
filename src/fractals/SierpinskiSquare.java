@@ -12,24 +12,20 @@ public class SierpinskiSquare extends FractalLogic {
     }
 
     public void squares() {
-        Rectangle2D win = getViewBox();
-        Rectangle2D third = new Rectangle2D.Double(
-                win.getX(),
-                win.getY(),
-                win.getWidth() / 3,
-                win.getWidth() / 3
-        );
-        Vector2D pos = new Vector2D(win.getWidth() / 3, win.getHeight() / 3);
-        squares(pos, pos, getIterations());
+        Rectangle2D win = getViewOperator().getDrawBox();
+        Vector2D pos = new Vector2D(win.getX() + win.getWidth() / 3, win.getY() + win.getHeight() / 3);
+        Vector2D size = new Vector2D(win.getWidth() / 3, win.getWidth() / 3);
+        squares(pos, size, getIterations());
     }
 
     public void squares(Vector2D pos, Vector2D size, int it) {
         getGraphics().fillRect(
-                pos.getXR(),
-                pos.getYR(),
-                size.getXR(),
-                size.getYR()
+                (int) pos.getX(),
+                (int) pos.getY(),
+                (int) size.getX(),
+                (int) size.getY()
         );
+
         if (it > 0) {
             double w3 = size.getX()/3.0;
             double h3 = size.getY()/3.0;

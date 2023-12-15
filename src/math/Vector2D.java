@@ -223,4 +223,8 @@ public class Vector2D {
         this.x += dx;
         this.y += dy;
     }
+
+    public Vector2D multiplyR(double xzoom, double yzoom) {
+        return new Vector2D(this.x*xzoom, this.y*yzoom);
+    }
 }

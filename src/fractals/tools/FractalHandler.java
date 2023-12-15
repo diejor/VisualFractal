@@ -8,8 +8,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-import static java.lang.Math.floor;
-
 public class FractalHandler extends FractalLogic {
     private MathOperator coordinateOperator;
     private PixelFractal fractal;
@@ -20,8 +18,8 @@ public class FractalHandler extends FractalLogic {
     }
 
     private void paintFractal() {
-        Rectangle2D viewBox = getViewOperator().getViewBox();
-        Rectangle2D drawBox = getViewOperator().getDrawBox();
+        Rectangle2D viewBox = getViewOperator().getDrawBox();
+        Rectangle2D drawBox = getViewOperator().getViewBox();
 
         int xstart = round(drawBox.getX());
         int ystart = round(drawBox.getY());
@@ -50,7 +48,7 @@ public class FractalHandler extends FractalLogic {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        this.coordinateOperator = new MathOperator(fractal.getCoordinates(), getViewBox());
+        this.coordinateOperator = new MathOperator(fractal.getCoordinates(), getViewOperator().getDrawBox());
         paintFractal();
     }
 }

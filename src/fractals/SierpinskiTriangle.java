@@ -3,6 +3,7 @@ package fractals;
 import fractals.tools.FractalLogic;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 public class SierpinskiTriangle extends FractalLogic {
@@ -11,35 +12,35 @@ public class SierpinskiTriangle extends FractalLogic {
     }
 
     public void sierpinskiTriangle() {
-        Rectangle2D viewBox = getViewBox();
-        int x = round(viewBox.getX());
-        int y = round(viewBox.getY());
-        double w = viewBox.getWidth();
-        double h = viewBox.getHeight();
-        double wh = w*0.5;
-        double hh = h*0.5;
+        Rectangle2D drawBox = getViewOperator().getDrawBox();
+        int startx = round(drawBox.getX());
+        int starty = round(drawBox.getY());
+        double width = drawBox.getWidth();
+        double height = drawBox.getHeight();
+        double half_width = width*0.5;
+        double half_height = height*0.5;
         getGraphics().drawPolygon(
-                new int[]{x, round(w) + x, round(wh) + x},
-                new int[]{round(h) + y, round(h) + y, y},
+                new int[]{startx, round(width) + startx, round(half_width) + startx},
+                new int[]{round(height) + starty, round(height) + starty, starty},
                 3
         );
-        sierpinskiTriangle(wh*0.5 + x, hh + y, wh, hh, getIterations()-1);
+        sierpinskiTriangle(half_width*0.5 + startx, half_height + starty, half_width, half_height, getIterations()-1);
     }
 
-    public void sierpinskiTriangle(double x, double y, double w, double h, int it) {
+    public void sierpinskiTriangle(double start, double y, double w, double h, int it) {
         if (it > 0) {
             double wh = w*0.5;
             double hh = h*0.5;
             double whh = wh*0.5;
             getGraphics().drawPolygon(
-                    new int[]{round(x), round(x+w), round(x+wh)},
+                    new int[]{round(start), round(start+w), round(start+wh)},
                     new int[]{round(y), round(y), round(y+h)},
                     3
             );
 
-            sierpinskiTriangle(x-whh, y+hh, wh, hh,  it-1);
-            sierpinskiTriangle(x+whh, y-hh, wh, hh, it-1);
-            sierpinskiTriangle(x+wh+whh, y+hh, wh, hh, it-1);
+            sierpinskiTriangle(start-whh, y+hh, wh, hh,  it-1);
+            sierpinskiTriangle(start+whh, y-hh, wh, hh, it-1);
+            sierpinskiTriangle(start+wh+whh, y+hh, wh, hh, it-1);
         }
     }
 
@@ -48,5 +49,4 @@ public class SierpinskiTriangle extends FractalLogic {
         super.paint(g);
         sierpinskiTriangle();
     }
-
 }

@@ -72,10 +72,6 @@ public class FractalLogic implements PrintableFractal {
         return (int)Math.round(u);
     }
 
-    public Rectangle2D getViewBox() {
-        return viewOp.getViewBox();
-    }
-
     public ViewOperator getViewOperator() {
         return viewOp;
     }
@@ -83,5 +79,13 @@ public class FractalLogic implements PrintableFractal {
     @Override
     public void paint(Graphics g) {
         setGraphics(g);
+
+        int originX = (int)viewOp.getDrawBox().getX();
+        int width = (int)viewOp.getDrawBox().getWidth();
+        int originY = (int)viewOp.getDrawBox().getY();
+        int height = (int)viewOp.getDrawBox().getHeight();
+
+        g2d.drawRect(originX, originY, width, height);
+
     }
 }
